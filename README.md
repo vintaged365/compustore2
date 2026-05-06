@@ -5,18 +5,21 @@ A complete web-based management system for a computer hardware store with staff 
 ## 📁 Project Structure
 
 ```
-claude/
+compustore2/
 ├── index.html                 # Main login page
 ├── database.sql              # Database schema (import this first!)
+├── README.md
 ├── php/                      # Backend API
 │   ├── login.php            # User authentication
+│   ├──logout.php            # Session termination
 │   ├── register.php         # User registration
-│   ├── logout.php           # Session termination
-│   ├── session.php          # Check login status
-│   ├── products.php         # Product CRUD & listing
+│   ├──mpesa_callback.php
+│   ├──mpesa.php
 │   ├── orders.php           # Order management
-│   ├── services.php         # Service requests
+│   ├── products.php         # Product CRUD & listing
+│   ├── session.php          # Check login status
 │   ├── reports.php          # Dashboard analytics
+│   ├── services.php         # Service requests
 ├── includes/                # Backend utilities
 │   └── db.php               # Database connection
 ├── css/                      # Stylesheets
@@ -31,11 +34,16 @@ claude/
 │   ├── services.js          # Service management
 │   ├── shop.js              # Customer shopping
 │   └── request-service.js   # Service request form
-├── admin/                    # Admin dashboards
-│   └── dashboard.html       # Admin panel
 ├── staff/                    # Staff dashboards
-│   └── dashboard.html       # Staff panel
+│   ├── dashboard.html       # Staff pane
+│   ├── inventory.html
+│   ├── orders.html
+│   ├── services.html    
 └── customer/                 # Customer area
+    ├──my-orders.html
+    ├──my-services.html
+    ├──request-service.html
+    ├──shop.html
     └── dashboard.html       # Customer dashboard
 ```
 
@@ -47,23 +55,24 @@ claude/
 - Update credentials in `includes/db.php` if needed
 
 ```php
-define('DB_HOST', 'localhost');
-define('DB_USER', 'root');
-define('DB_PASS', '');  // Your MySQL password
-define('DB_NAME', 'compustore_hms');
+define('DB_HOST', getenv('DB_HOST') ?: '127.0.0.1');
+define('DB_PORT', 3306);
+define('DB_USER', getenv('DB_USER') ?: 'root');
+define('DB_PASS', getenv('DB_PASS') !== false ? getenv('DB_PASS') : '');
+define('DB_NAME', getenv('DB_NAME') ?: 'compustore_hms');
 ```
 
 ### 2. Start a Local Server
 
 **PHP Built-in Server:**
-```bash
-cd claude
+```bash using wsl ubuntu
+cd compustore2
 php -S localhost:8000
 ```
 
 **Apache/Xampp:**
 - Copy to `htdocs` folder
-- Visit `http://localhost/claude/`
+- Visit `http://localhost/compustore2/`
 
 ### 3. Demo Credentials
 
@@ -203,6 +212,7 @@ Private project - All rights reserved
 ## 🤝 Support
 
 For issues or questions, check the database schema and ensure all tables are properly created.
+Ask bossie..
 
 ---
 
