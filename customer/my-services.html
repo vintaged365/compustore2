@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Services - CompuStore HMS</title>
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+<div class="app-shell">
+  <nav class="sidebar">
+    <div class="sidebar-logo">CompuStore</div>
+    <div class="sidebar-section">My Account</div>
+    <a class="sidebar-link" href="dashboard.html"><span class="icon">HM</span> Home</a>
+    <a class="sidebar-link" href="shop.html"><span class="icon">SH</span> Shop</a>
+    <a class="sidebar-link" href="my-orders.html"><span class="icon">OR</span> My Orders</a>
+    <a class="sidebar-link active" href="my-services.html"><span class="icon">SV</span> My Services</a>
+    <a class="sidebar-link" href="request-service.html"><span class="icon">RQ</span> Request Service</a>
+    <div class="sidebar-section">Account</div>
+    <a class="sidebar-link logout-btn" href="#"><span class="icon">LO</span> Logout</a>
+  </nav>
+  <main class="main-area">
+    <div class="topbar"><span class="topbar-title">My Services</span><div class="topbar-user"><span id="topbarName">Customer</span><div class="avatar" id="topbarAvatar">CU</div></div></div>
+    <div class="page-content">
+      <div id="alertBox" class="alert hidden"></div>
+      <div class="card">
+        <div class="card-header"><h3>Service History</h3><a class="btn btn-primary" href="request-service.html">New Request</a></div>
+        <div class="table-wrap"><table><thead><tr><th>Ref</th><th>Device</th><th>Issue</th><th>Priority</th><th>Status</th><th>Date</th></tr></thead><tbody id="servicesTbody"></tbody></table></div>
+      </div>
+    </div>
+  </main>
+</div>
+<script src="../js/utils.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', async () => {
+  bindLogout();
+  const user = await requireAuth();
+  if (!user) return;
+  fillTopbar(user);
+  try {
+    const services = await apiFetch(`../php/services.php?user_id=${user.id}`);
+    document.getElementById('servicesTbody').innerHTML = services.length
+      ? services.map(s => `<tr><td>${s.service_ref}</td><td>${s.device_type}</td><td>${s.issue_description}</td><td>${priorityBadge(s.priority)}</td><td>${statusBadge(s.status)}</td><td>${formatDate(s.created_at)}</td></tr>`).join('')
+      : '<tr><td colspan="6" class="empty">No service requests yet</td></tr>';
+  } catch (err) {
+    showAlert('alertBox', err.message);
+  }
+});
+</script>
+</body>
+</html>

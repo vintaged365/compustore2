@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Service Requests - CompuStore HMS</title>
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+<div class="app-shell">
+  <nav class="sidebar">
+    <div class="sidebar-logo">CompuStore</div>
+    <div class="sidebar-section">Main</div>
+    <a class="sidebar-link" href="dashboard.html"><span class="icon">DB</span> Dashboard</a>
+    <a class="sidebar-link" href="inventory.html"><span class="icon">IN</span> Inventory</a>
+    <a class="sidebar-link" href="orders.html"><span class="icon">OR</span> Orders</a>
+    <a class="sidebar-link active" href="services.html"><span class="icon">SV</span> Service Requests</a>
+    <div class="sidebar-section">Account</div>
+    <a class="sidebar-link logout-btn" href="#"><span class="icon">LO</span> Logout</a>
+  </nav>
+
+  <main class="main-area">
+    <div class="topbar">
+      <span class="topbar-title">Service Requests</span>
+      <div class="topbar-user"><span id="topbarName">Staff</span><div class="avatar" id="topbarAvatar">ST</div></div>
+    </div>
+    <div class="page-content">
+      <div id="alertBox" class="alert hidden"></div>
+      <div class="card">
+        <div class="card-header"><h3>Requests</h3></div>
+        <div class="toolbar">
+          <select id="filterStatus" onchange="loadServices()">
+            <option value="">All statuses</option>
+            <option value="pending">Pending</option>
+            <option value="in_progress">In progress</option>
+            <option value="awaiting_parts">Awaiting parts</option>
+            <option value="completed">Completed</option>
+          </select>
+          <span class="toolbar-right"></span>
+          <button id="viewKanban" class="btn btn-primary" onclick="setView('kanban')">Kanban</button>
+          <button id="viewTable" class="btn btn-outline" onclick="setView('table')">Table</button>
+        </div>
+        <div id="kanbanView" class="kanban">
+          <div class="kanban-col col-pending"><div class="kanban-col-title">Pending <span id="cnt-pending">0</span></div><div id="col-pending"></div></div>
+          <div class="kanban-col col-progress"><div class="kanban-col-title">In Progress <span id="cnt-in_progress">0</span></div><div id="col-in_progress"></div></div>
+          <div class="kanban-col col-parts"><div class="kanban-col-title">Awaiting Parts <span id="cnt-awaiting_parts">0</span></div><div id="col-awaiting_parts"></div></div>
+          <div class="kanban-col col-completed"><div class="kanban-col-title">Completed <span id="cnt-completed">0</span></div><div id="col-completed"></div></div>
+        </div>
+        <div id="tableView" class="table-wrap hidden">
+          <table>
+            <thead><tr><th>Ref</th><th>Customer</th><th>Device</th><th>Issue</th><th>Priority</th><th>Status</th><th>Technician</th><th>Date</th><th>Actions</th></tr></thead>
+            <tbody id="servicesTbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<div id="serviceModal" class="modal-overlay hidden">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 id="serviceModalTitle">Service Request</h3>
+      <button class="modal-close" onclick="closeModal('serviceModal')">&times;</button>
+    </div>
+    <div class="modal-body" id="serviceModalBody"></div>
+    <div class="modal-footer" id="serviceModalFooter"></div>
+  </div>
+</div>
+
+<script src="../js/utils.js"></script>
+<script src="../js/services.js"></script>
+</body>
+</html>

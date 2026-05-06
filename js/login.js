@@ -1,0 +1,184 @@
+// ============================================================
+// CompuStore HMS - Login Logic
+// ============================================================
+
+let selectedRole = 'customer';
+
+function selectRole(role, button) {
+  selectedRole = role;
+  document.querySelectorAll('.role-btn').forEach(btn => {
+    btn.classList.remove('active');
+  });
+  button.classList.add('active');
+}
+
+function showAlert(message, type = 'error') {
+  const alertBox = document.getElementById('alertBox');
+  alertBox.textContent = message;
+  alertBox.className = `alert ${type}`;
+  alertBox.classList.remove('hidden');
+  setTimeout(() => {
+    alertBox.classList.add('hidden');
+  }, 3000);
+}
+
+async function handleLogin(event) {
+  event.preventDefault();
+
+  const email = document.getElementById('email').value.trim();
+  const password = document.getElementById('password').value;
+
+  if (!email || !password) {
+    showAlert('Please enter email and password', 'error');
+    return;
+  }
+
+  try {
+    const res = await fetch('php/login.php', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password, role: selectedRole })
+    });
+    const data = await res.json();
+
+    if (data.success) {
+      showAlert('Login successful!', 'success');
+      setTimeout(() => {
+        window.location.href = data.redirect;
+      }, 1000);
+    } else {
+      showAlert(data.error || data.message || 'Login failed', 'error');
+    }
+  } catch (err) {
+    console.error('Login request failed:', err);
+    showAlert('Network error: ' + err.message, 'error');
+  }
+}
+
+function showRegister() {
+    document.getElementById('registerModal').style.display = 'block';
+    document.getElementById('registerMessage').textContent = ''; // Clear previous messages
+    document.getElementById('registerForm').reset(); // Reset form fields
+}
+
+function closeRegisterModal() {
+    document.getElementById('registerModal').style.display = 'none';
+    document.getElementById('registerForm').reset();
+}
+
+// Close modal when clicking outside the content
+window.onclick = function(event) {
+    const modal = document.getElementById('registerModal');
+    if (event.target === modal) {
+        closeRegisterModal();
+    }
+};
+
+// Handle registration form submission
+document.getElementById('registerForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const messageEl = document.getElementById('registerMessage');
+    messageEl.style.color = 'blue';
+    messageEl.textContent = 'Creating your account...';
+
+    // Get values from registration form with correct IDs
+    const data = {
+        fullName: document.getElementById('regFullName').value.trim(),
+        email: document.getElementById('regEmail').value.trim(),
+        password: document.getElementById('regPassword').value.trim(),
+        phone: document.getElementById('regPhone').value.trim(),
+        address: document.getElementById('regAddress').value.trim()
+    };
+
+    // Validate required fields
+    if (!data.fullName || !data.email || !data.password) {
+        messageEl.style.color = 'red';
+        messageEl.textContent = 'Please fill in all required fields';
+        return;
+    }
+
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(data.email)) {
+        messageEl.style.color = 'red';
+        messageEl.textContent = 'Please enter a valid email address';
+        return;
+    }
+
+    // Validate password length
+    if (data.password.length < 6) {
+        messageEl.style.color = 'red';
+        messageEl.textContent = 'Password must be at least 6 characters';
+        return;
+    }
+
+    try {
+        console.log("Sending registration request...", data);
+        
+        const response = await fetch('php/register.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        });
+
+        console.log('Response status:', response.status, response.statusText);
+
+        const text = await response.text();
+        console.log('Raw response:', text);
+
+        let result;
+        try {
+            result = JSON.parse(text);
+        } catch (e) {
+            console.error('JSON parse error:', e);
+            messageEl.style.color = 'red';
+            messageEl.textContent = 'Server error: Invalid response format';
+            return;
+        }
+
+        if (result.success) {
+            messageEl.style.color = 'green';
+            messageEl.textContent = result.message || 'Account created successfully! You can now log in.';
+            
+            // Clear and close modal after 2 seconds
+            setTimeout(() => {
+                closeRegisterModal();
+                showAlert('Account created! Please log in.', 'success');
+            }, 2000);
+        } else {
+            messageEl.style.color = 'red';
+            messageEl.textContent = result.error || 'Registration failed. Please try again.';
+        }
+    } catch (err) {
+        console.error('Registration error:', err);
+        messageEl.style.color = 'red';
+        messageEl.textContent = `Error: ${err.message}`;
+    }
+});
+
+function dashboardForRole(role) {
+  if (role === 'admin') return 'admin/dashboard.html';
+  if (['staff', 'manager', 'technician'].includes(role)) return 'staff/dashboard.html';
+  return 'customer/dashboard.html';
+}
+
+// Check if already logged in
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('.role-btn').forEach(btn => {
+    btn.addEventListener('click', () => selectRole(btn.dataset.role, btn));
+  });
+
+  fetch('php/session.php')
+    .then(res => res.json())
+    .then(data => {
+      if (data.loggedIn) {
+        window.location.href = dashboardForRole(data.user.role);
+      }
+    })
+    .catch(err => {
+      console.log('Session check failed:', err);
+    });
+});

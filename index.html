@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CompuStore HMS - Login</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/login.css">
+</head>
+
+<body>
+    <div class="login-container">
+        <section class="landing-panel" aria-label="CompuStore HMS overview">
+            <div class="brand-mark">CS</div>
+            <p class="eyebrow">Hardware & Service Management</p>
+            <h1>Run sales, repairs, and inventory from one clean workspace.</h1>
+            <p class="landing-copy">
+                Track stock, process customer orders, assign technicians, and keep service requests visible from intake
+                to completion.
+            </p>
+            <div class="landing-metrics">
+                <div><strong>3</strong><span>Role portals</span></div>
+                <div><strong>24/7</strong><span>Request tracking</span></div>
+                <div><strong>KES</strong><span>Local currency</span></div>
+            </div>
+        </section>
+
+        <div class="login-card">
+            <div class="login-header">
+                <div class="login-logo">CS</div>
+                <h1>CompuStore HMS</h1>
+                <p>Hardware & Service Management System</p>
+            </div>
+
+            <div id="alertBox" class="alert hidden"></div>
+
+            <div class="role-selector">
+                <button type="button" class="role-btn active" data-role="customer">Customer</button>
+                <button type="button" class="role-btn" data-role="staff">Staff</button>
+                <button type="button" class="role-btn" data-role="admin">Admin</button>
+            </div>
+
+            <form id="loginForm" onsubmit="handleLogin(event)">
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="email" placeholder="user@example.com" required>
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="password" placeholder="Password" required>
+                </div>
+                <button type="submit" class="btn-primary btn-full">Login</button>
+            </form>
+
+            <!-- Registration Modal -->
+            <div>Don't have an account? <a href="#" onclick="showRegister(); return false;">Register here</a></div>
+
+            <div class="demo">
+                <div class="demo-credentials">
+                    <strong>Demo Accounts:</strong><br>
+                    <small>Customer: customer@test.com (pass: password)<br>
+                        Staff: staff@test.com (pass: password)<br>
+                        Admin: admin@test.com (pass: password)</small>
+                </div>
+                <div>
+                    <div id="registerModal" class="modal">
+                        <div class="modal-content">
+                            <span class="close" onclick="closeRegisterModal()">&times;</span>
+                            <h2>Create New Account</h2>
+
+                            <form id="registerForm">
+                                <input type="text" id="regFullName" placeholder="Full Name" required>
+                                <input type="email" id="regEmail" placeholder="Email Address" required>
+                                <input type="password" id="regPassword" placeholder="Password (min 6 characters)"
+                                    required>
+                                <input type="tel" id="regPhone" placeholder="Phone Number (optional)">
+                                <input type="text" id="regAddress" placeholder="Address (optional)">
+
+                                <button type="submit">Create Account</button>
+                            </form>
+
+                            <p id="registerMessage"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <script src="js/utils.js"></script>
+    <script src="js/login.js"></script>
+</body>
+
+</html>

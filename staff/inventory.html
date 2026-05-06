@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Inventory - CompuStore HMS</title>
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+<div class="app-shell">
+  <nav class="sidebar">
+    <div class="sidebar-logo">CompuStore</div>
+    <div class="sidebar-section">Main</div>
+    <a class="sidebar-link" href="dashboard.html"><span class="icon">DB</span> Dashboard</a>
+    <a class="sidebar-link active" href="inventory.html"><span class="icon">IN</span> Inventory</a>
+    <a class="sidebar-link" href="orders.html"><span class="icon">OR</span> Orders</a>
+    <a class="sidebar-link" href="services.html"><span class="icon">SV</span> Service Requests</a>
+    <div class="sidebar-section">Account</div>
+    <a class="sidebar-link logout-btn" href="#"><span class="icon">LO</span> Logout</a>
+  </nav>
+
+  <main class="main-area">
+    <div class="topbar">
+      <span class="topbar-title">Inventory</span>
+      <div class="topbar-user"><span id="topbarName">Staff</span><div class="avatar" id="topbarAvatar">ST</div></div>
+    </div>
+
+    <div class="page-content">
+      <div id="alertBox" class="alert hidden"></div>
+      <div class="card">
+        <div class="card-header">
+          <h3>Products</h3>
+          <button class="btn btn-primary" onclick="resetForm(); openModal('productModal')">Add Product</button>
+        </div>
+        <div class="toolbar">
+          <input class="search-input" id="searchInput" type="search" placeholder="Search products or SKU">
+          <select id="categoryFilter"><option value="">All categories</option></select>
+          <select id="statusFilter">
+            <option value="">All stock</option>
+            <option value="low">Low stock</option>
+            <option value="out">Out of stock</option>
+          </select>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Product</th><th>SKU</th><th>Category</th><th>Stock</th><th>Price</th><th>Status</th><th>Actions</th></tr></thead>
+            <tbody id="productsTbody"></tbody>
+          </table>
+        </div>
+        <div class="toolbar" id="pagination" style="margin-top:16px"></div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<div id="productModal" class="modal-overlay hidden">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 id="modalTitle">Add Product</h3>
+      <button class="modal-close" onclick="closeModal('productModal')">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div id="modalAlert" class="alert hidden"></div>
+      <input type="hidden" id="productId">
+      <div class="form-row">
+        <div class="form-group"><label>Name</label><input id="productName" required></div>
+        <div class="form-group"><label>SKU</label><input id="productSku" required></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Category</label><input id="productCategory" required></div>
+        <div class="form-group"><label>Unit Price</label><input id="productPrice" type="number" min="0" step="0.01" required></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Quantity</label><input id="productQty" type="number" min="0"></div>
+        <div class="form-group"><label>Reorder Level</label><input id="productReorder" type="number" min="0"></div>
+      </div>
+      <div class="form-group"><label>Description</label><textarea id="productDesc"></textarea></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('productModal')">Cancel</button>
+      <button class="btn btn-primary" id="saveProductBtn" onclick="saveProduct()">Save Product</button>
+    </div>
+  </div>
+</div>
+
+<script src="../js/utils.js"></script>
+<script src="../js/inventory.js"></script>
+</body>
+</html>

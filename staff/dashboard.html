@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard — CompuStore HMS</title>
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+<div class="app-shell">
+
+  <!-- Sidebar -->
+  <nav class="sidebar">
+    <div class="sidebar-logo">🖥️ CompuStore</div>
+    <div class="sidebar-section">Main</div>
+    <a class="sidebar-link active" data-page="dashboard" href="dashboard.html"><span class="icon">📊</span> Dashboard</a>
+    <a class="sidebar-link" data-page="inventory" href="inventory.html"><span class="icon">📦</span> Inventory</a>
+    <a class="sidebar-link" data-page="orders" href="orders.html"><span class="icon">🛒</span> Orders</a>
+    <a class="sidebar-link" data-page="services" href="services.html"><span class="icon">🔧</span> Service Requests</a>
+    <div class="sidebar-section">Account</div>
+    <a class="sidebar-link logout-btn" href="#"><span class="icon">🚪</span> Logout</a>
+  </nav>
+
+  <div class="main-area">
+    <!-- Topbar -->
+    <div class="topbar">
+      <span class="topbar-title">Dashboard</span>
+      <div class="topbar-user">
+        <span id="topbarName">Staff</span>
+        <div class="avatar" id="topbarAvatar">ST</div>
+      </div>
+    </div>
+
+    <div class="page-content">
+      <div id="alertBox" class="alert hidden"></div>
+
+      <!-- Stats -->
+      <div class="stats-grid" id="statsGrid">
+        <div class="stat-card"><div class="stat-label">Sales This Month</div><div class="stat-value" id="statSales">—</div><div class="stat-sub">Completed orders</div></div>
+        <div class="stat-card"><div class="stat-label">Total Products</div><div class="stat-value" id="statProducts">—</div><div class="stat-sub" id="statLow">—</div></div>
+        <div class="stat-card"><div class="stat-label">Pending Services</div><div class="stat-value" id="statServices">—</div><div class="stat-sub">Awaiting attention</div></div>
+        <div class="stat-card"><div class="stat-label">Monthly Orders</div><div class="stat-value" id="statOrders">—</div><div class="stat-sub">Total this month</div></div>
+        <div class="stat-card"><div class="stat-label">Customers</div><div class="stat-value" id="statCustomers">—</div><div class="stat-sub">Registered users</div></div>
+      </div>
+
+      <div class="grid-2">
+        <!-- Recent Services -->
+        <div class="card">
+          <div class="card-header">
+            <h3>Recent Service Requests</h3>
+            <a href="services.html" class="btn btn-sm btn-outline">View All</a>
+          </div>
+          <div class="table-wrap">
+            <table id="recentServicesTable">
+              <thead><tr><th>Ref</th><th>Customer</th><th>Device</th><th>Status</th><th>Priority</th></tr></thead>
+              <tbody id="recentServicesTbody"><tr><td colspan="5" class="empty">Loading…</td></tr></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Recent Orders -->
+        <div class="card">
+          <div class="card-header">
+            <h3>Recent Orders</h3>
+            <a href="orders.html" class="btn btn-sm btn-outline">View All</a>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>#</th><th>Customer</th><th>Amount</th><th>Status</th></tr></thead>
+              <tbody id="recentOrdersTbody"><tr><td colspan="4" class="empty">Loading…</td></tr></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Low Stock Alert -->
+      <div class="card" style="margin-top:20px">
+        <div class="card-header">
+          <h3>⚠️ Low Stock Alerts</h3>
+          <a href="inventory.html" class="btn btn-sm btn-warning">Manage Inventory</a>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Product</th><th>SKU</th><th>Category</th><th>In Stock</th><th>Reorder Level</th></tr></thead>
+            <tbody id="lowStockTbody"><tr><td colspan="5" class="empty">Loading…</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+
+    </div><!-- page-content -->
+  </div><!-- main-area -->
+</div><!-- app-shell -->
+
+<script src="../js/utils.js"></script>
+<script src="../js/dashboard.js"></script>
+</body>
+</html>

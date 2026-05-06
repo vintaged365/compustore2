@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shop - CompuStore HMS</title>
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+
+<body>
+  <div class="app-shell">
+    <nav class="sidebar">
+      <div class="sidebar-logo">CompuStore</div>
+      <div class="sidebar-section">My Account</div>
+      <a class="sidebar-link" href="dashboard.html"><span class="icon">HM</span> Home</a>
+      <a class="sidebar-link active" href="shop.html"><span class="icon">SH</span> Shop</a>
+      <a class="sidebar-link" href="my-orders.html"><span class="icon">OR</span> My Orders</a>
+      <a class="sidebar-link" href="my-services.html"><span class="icon">SV</span> My Services</a>
+      <a class="sidebar-link" href="request-service.html"><span class="icon">RQ</span> Request Service</a>
+      <div class="sidebar-section">Account</div>
+      <a class="sidebar-link logout-btn" href="#"><span class="icon">LO</span> Logout</a>
+    </nav>
+    <main class="main-area">
+      <div class="topbar">
+        <span class="topbar-title">Shop</span>
+        <div class="topbar-user"><span id="topbarName">Customer</span>
+          <div class="avatar" id="topbarAvatar">CU</div>
+        </div>
+      </div>
+      <div class="card" style="margin-top:20px">
+        <div class="card-header">
+          <h3>Products</h3>
+          <!-- Cart button opens the cart modal -->
+          <button class="btn btn-sm btn-outline" onclick="openCartModal()">
+            🛒 Cart <span id="cartCount" class="badge badge-info">0</span>
+          </button>
+        </div>
+        <div id="productsContainer" class="stats-grid"></div>
+        <div class="modal-overlay hidden" id="cartModal">
+          <div class="modal" style="max-width:520px">
+            <div class="modal-header">
+              <h3>🛒 Your Cart</h3>
+              <button class="modal-close" onclick="closeCartModal()">✕</button>
+            </div>
+
+            <div class="modal-body">
+              <!-- Cart line items rendered here -->
+              <div id="cartItems"></div>
+              <!-- Running total -->
+              <div class="cart-total-row hidden" id="cartTotalRow">
+                <span>Total</span>
+                <span id="cartTotalAmt"></span>
+              </div>
+            </div>
+
+            <div class="modal-footer">
+              <button class="btn btn-outline" onclick="closeCartModal()">Close</button>
+              <button class="btn btn-danger btn-sm" onclick="clearCart()" id="clearCartBtn">Clear Cart</button>
+              <button class="btn btn-primary" onclick="checkout()" id="checkoutBtn">Checkout</button>
+            </div>
+          </div>
+        </div>
+      </div>
+  </div>
+  </main>
+  </div>
+  <script src="../js/utils.js"></script>
+  <script src="../js/shop.js"></script>
+</body>
+
+</html>

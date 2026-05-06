@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Orders - CompuStore HMS</title>
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+<div class="app-shell">
+  <nav class="sidebar">
+    <div class="sidebar-logo">CompuStore</div>
+    <div class="sidebar-section">Main</div>
+    <a class="sidebar-link" href="dashboard.html"><span class="icon">DB</span> Dashboard</a>
+    <a class="sidebar-link" href="inventory.html"><span class="icon">IN</span> Inventory</a>
+    <a class="sidebar-link active" href="orders.html"><span class="icon">OR</span> Orders</a>
+    <a class="sidebar-link" href="services.html"><span class="icon">SV</span> Service Requests</a>
+    <div class="sidebar-section">Account</div>
+    <a class="sidebar-link logout-btn" href="#"><span class="icon">LO</span> Logout</a>
+  </nav>
+
+  <main class="main-area">
+    <div class="topbar">
+      <span class="topbar-title">Orders</span>
+      <div class="topbar-user"><span id="topbarName">Staff</span><div class="avatar" id="topbarAvatar">ST</div></div>
+    </div>
+    <div class="page-content">
+      <div id="alertBox" class="alert hidden"></div>
+      <div class="card">
+        <div class="card-header"><h3>Customer Orders</h3></div>
+        <div class="toolbar">
+          <select id="statusFilter" onchange="loadOrders()">
+            <option value="">All statuses</option>
+            <option value="pending">Pending</option>
+            <option value="processing">Processing</option>
+            <option value="completed">Completed</option>
+            <option value="cancelled">Cancelled</option>
+          </select>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Order</th><th>Customer</th><th>Type</th><th>Total</th><th>Status</th><th>Payment</th><th>Date</th><th>Actions</th></tr></thead>
+            <tbody id="ordersTbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<div id="orderModal" class="modal-overlay hidden">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 id="orderModalTitle">Order</h3>
+      <button class="modal-close" onclick="closeModal('orderModal')">&times;</button>
+    </div>
+    <div class="modal-body" id="orderModalBody"></div>
+    <div class="modal-footer" id="orderModalFooter"></div>
+  </div>
+</div>
+
+<script src="../js/utils.js"></script>
+<script src="../js/orders.js"></script>
+</body>
+</html>

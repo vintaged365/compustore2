@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Orders - CompuStore HMS</title>
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+<div class="app-shell">
+  <nav class="sidebar">
+    <div class="sidebar-logo">CompuStore</div>
+    <div class="sidebar-section">My Account</div>
+    <a class="sidebar-link" href="dashboard.html"><span class="icon">HM</span> Home</a>
+    <a class="sidebar-link" href="shop.html"><span class="icon">SH</span> Shop</a>
+    <a class="sidebar-link active" href="my-orders.html"><span class="icon">OR</span> My Orders</a>
+    <a class="sidebar-link" href="my-services.html"><span class="icon">SV</span> My Services</a>
+    <a class="sidebar-link" href="request-service.html"><span class="icon">RQ</span> Request Service</a>
+    <div class="sidebar-section">Account</div>
+    <a class="sidebar-link logout-btn" href="#"><span class="icon">LO</span> Logout</a>
+  </nav>
+  <main class="main-area">
+    <div class="topbar"><span class="topbar-title">My Orders</span><div class="topbar-user"><span id="topbarName">Customer</span><div class="avatar" id="topbarAvatar">CU</div></div></div>
+    <div class="page-content">
+      <div id="alertBox" class="alert hidden"></div>
+      <div class="card">
+        <div class="card-header"><h3>Order History</h3></div>
+        <div class="table-wrap"><table><thead><tr><th>Order</th><th>Total</th><th>Status</th><th>Payment</th><th>Date</th></tr></thead><tbody id="ordersTbody"></tbody></table></div>
+      </div>
+    </div>
+  </main>
+</div>
+<script src="../js/utils.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', async () => {
+  bindLogout();
+  const user = await requireAuth();
+  if (!user) return;
+  fillTopbar(user);
+  try {
+    const orders = await apiFetch(`../php/orders.php?user_id=${user.id}`);
+    document.getElementById('ordersTbody').innerHTML = orders.length
+      ? orders.map(o => `<tr><td>#${o.order_id}</td><td>${formatMoney(o.total_amount)}</td><td>${statusBadge(o.status)}</td><td>${statusBadge(o.payment_status)}</td><td>${formatDate(o.created_at)}</td></tr>`).join('')
+      : '<tr><td colspan="5" class="empty">No orders yet</td></tr>';
+  } catch (err) {
+    showAlert('alertBox', err.message);
+  }
+});
+</script>
+</body>
+</html>
