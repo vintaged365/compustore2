@@ -1,4 +1,4 @@
--- Active: 1778098414649@@127.0.0.1@3306@compustore_hms
+-- Active: 1778178145943@@127.0.0.1@3306@compustore_hms
 -- CompuStore HMS Database Schema
 -- Computer Hardware and Service Management System
 
@@ -6,6 +6,11 @@ CREATE DATABASE IF NOT EXISTS compustore_hms;
 
 SHOW DATABASES;
 USE compustore_hms;
+
+show tables
+
+select *
+from users
 
 -- Users table (Customers)
 CREATE TABLE IF NOT EXISTS users (

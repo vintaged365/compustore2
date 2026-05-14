@@ -274,4 +274,92 @@ tr:last-child td { border-bottom: none; }
 .cart-item:last-child { border-bottom: none; }
 .cart-item input { width: 72px; }
 
+    .cart-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--border, #e2e8f0);
+    }
+
+    .cart-item:last-child {
+      border-bottom: none;
+    }
+
+    .cart-item-name {
+      flex: 1;
+      font-weight: 600;
+      font-size: 13px;
+    }
+
+    .cart-item-price {
+      font-size: 13px;
+      color: var(--muted, #64748b);
+      white-space: nowrap;
+    }
+
+    .cart-item-qty {
+      width: 54px;
+      padding: 5px 8px;
+      text-align: center;
+    }
+
+    .cart-total-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 0 0;
+      margin-top: 4px;
+      border-top: 2px solid var(--border, #e2e8f0);
+      font-size: 15px;
+      font-weight: 700;
+    }
+
+    .cart-empty {
+      text-align: center;
+      padding: 32px 0;
+      color: var(--muted, #64748b);
+      font-size: 13px;
+    }
+
+    .cart-empty-icon {
+      font-size: 36px;
+      margin-bottom: 8px;
+    }
+
+    /* ── Product card inside dashboard ── */
+    .product-card {
+      background: var(--surface, #fff);
+      border: 1px solid var(--border, #e2e8f0);
+      border-radius: 8px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .product-card h3 {
+      font-size: 14px;
+      margin: 0;
+    }
+
+    .product-card .price {
+      font-weight: 700;
+      color: var(--primary, #2563eb);
+      font-size: 15px;
+      margin: 0;
+    }
+
+    .product-icon {
+      font-size: 28px;
+    }
+
+    /* ── M-Pesa modal ── */
+    #mpesaModal .modal {
+      border-top: 4px solid #00c853;
+    }
+    #mpesaModal .modal-header h3 {
+      color: #00c853;
+    }
+
 
