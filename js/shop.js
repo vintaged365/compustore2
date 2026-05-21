@@ -28,12 +28,13 @@ function renderProducts() {
 
   container.innerHTML = products.map(p => `
     <div class="product-card">
-
       <h3>${p.product_name}</h3>
       <p class="price">${formatMoney(p.unit_price)}</p>
       <button
-        onclick="addToCart(${p.product_id}, '${p.product_name.replace(/'/g, "\\'")}', ${p.unit_price})"
-        class="btn btn-primary btn-sm">
+        data-id="${p.product_id}"
+        data-name="${p.product_name.replace(/'/g, "\\'")}"
+        data-price="${p.unit_price}"
+        class="btn btn-primary btn-sm add-to-cart-btn">
         Add to Cart
       </button>
     </div>
@@ -107,10 +108,10 @@ function renderCart() {
         type="number"
         value="${item.quantity}"
         min="1"
-        onchange="updateQuantity(${item.id}, this.value)">
+        data-id="${item.id}">
       <button
-        class="btn btn-danger btn-sm"
-        onclick="removeFromCart(${item.id})">
+        class="btn btn-danger btn-sm remove-from-cart-btn"
+        data-id="${item.id}">
         Remove
       </button>
     </div>
@@ -170,14 +171,14 @@ function openMpesaModal(total) {
   modal.id = 'mpesaModal';
   modal.className = 'modal-overlay';
   modal.innerHTML = `
-    <div class="modal" style="max-width:420px">
+    <div class="modal max-w-420">
       <div class="modal-header">
         <h3>💚 Pay with M-Pesa</h3>
-        <button class="modal-close" onclick="closeMpesaModal()">✕</button>
+        <button class="modal-close" id="closeMpesaBtn">✕</button>
       </div>
       <div class="modal-body">
         <div id="mpesaAlertBox" class="alert hidden"></div>
-        <p style="margin-bottom:12px;color:var(--muted,#64748b);font-size:13px;">
+        <p class="mb-12 muted fs-13">
           You will receive an STK push prompt on your phone. Enter your M-Pesa PIN to complete payment.
         </p>
         <div class="form-group">
@@ -185,23 +186,30 @@ function openMpesaModal(total) {
           <input class="form-input" type="text" value="${formatMoney(total)}" disabled>
         </div>
         <div class="form-group">
-          <label class="form-label">M-Pesa Phone Number <span style="color:red">*</span></label>
+          <label class="form-label">M-Pesa Phone Number <span class="text-danger">*</span></label>
           <input class="form-input" type="tel" id="mpesaPhone"
             placeholder="e.g. 0712345678 or 254712345678"
             autocomplete="tel">
         </div>
-        <p style="font-size:11px;color:var(--muted,#94a3b8);margin-top:4px;">
+        <p class="fs-11 muted mt-4">
           Sandbox test number: <strong>254708374149</strong>
         </p>
       </div>
       <div class="modal-footer">
-        <button class="btn btn-outline" onclick="closeMpesaModal()">Cancel</button>
-        <button class="btn btn-primary" id="mpesaPayBtn" onclick="submitMpesaPayment(${total})">
+        <button class="btn btn-outline" id="closeMpesaBtn2">Cancel</button>
+        <button class="btn btn-primary" id="mpesaPayBtn" data-total="${total}">
           💚 Pay ${formatMoney(total)}
         </button>
       </div>
     </div>`;
   document.body.appendChild(modal);
+
+  // Add event listeners to newly created modal buttons
+  document.getElementById('closeMpesaBtn').addEventListener('click', closeMpesaModal);
+  document.getElementById('closeMpesaBtn2').addEventListener('click', closeMpesaModal);
+  document.getElementById('mpesaPayBtn').addEventListener('click', function() {
+    submitMpesaPayment(this.dataset.total);
+  });
 
   // Pre-fill phone from session if available
   getSessionUser().then(u => {
@@ -305,7 +313,11 @@ function pollPaymentStatus(checkoutRequestId, orderId) {
         );
         // Reload dashboard data to reflect new payment_status
         const user = await getSessionUser();
-        if (user) loadCustomerDashboard(user.id);
+        if (user) {
+            if (typeof loadCustomerDashboard === 'function') {
+                loadCustomerDashboard(user.id);
+            }
+        }
         return;
       }
 
@@ -352,4 +364,40 @@ document.addEventListener('DOMContentLoaded', async () => {
   fillTopbar(user);
   loadProducts();
   updateCartCount();   // show correct badge count on page load
+
+  // Event listeners for static elements
+  const openCartBtn = document.getElementById('openCartBtn');
+  if (openCartBtn) openCartBtn.addEventListener('click', openCartModal);
+
+  const closeCartBtn = document.getElementById('closeCartBtn');
+  if (closeCartBtn) closeCartBtn.addEventListener('click', closeCartModal);
+
+  const closeCartBtn2 = document.getElementById('closeCartBtn2');
+  if (closeCartBtn2) closeCartBtn2.addEventListener('click', closeCartModal);
+
+  const clearCartBtn = document.getElementById('clearCartBtn');
+  if (clearCartBtn) clearCartBtn.addEventListener('click', clearCart);
+
+  const checkoutBtn = document.getElementById('checkoutBtn');
+  if (checkoutBtn) checkoutBtn.addEventListener('click', checkout);
+
+  // Event delegation for dynamic elements
+  document.addEventListener('click', (e) => {
+    if (e.target.classList.contains('add-to-cart-btn')) {
+      const { id, name, price } = e.target.dataset;
+      addToCart(Number(id), name, Number(price));
+    }
+
+    if (e.target.classList.contains('remove-from-cart-btn')) {
+      const { id } = e.target.dataset;
+      removeFromCart(Number(id));
+    }
+  });
+
+  document.addEventListener('change', (e) => {
+    if (e.target.classList.contains('cart-item-qty')) {
+      const { id } = e.target.dataset;
+      updateQuantity(Number(id), e.target.value);
+    }
+  });
 });

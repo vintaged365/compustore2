@@ -7,10 +7,33 @@ document.addEventListener('DOMContentLoaded', async () => {
   if (!user) return;
   fillTopbar(user);
   loadOrders();
+
+  const statusFilter = document.getElementById('statusFilter');
+  if (statusFilter) statusFilter.addEventListener('change', loadOrders);
+
+  const closeOrderModalBtn = document.getElementById('closeOrderModalBtn');
+  if (closeOrderModalBtn) {
+    closeOrderModalBtn.addEventListener('click', () => closeModal('orderModal'));
+  }
+
+  // Event delegation for "Details" buttons
+  document.getElementById('ordersTbody').addEventListener('click', (e) => {
+    if (e.target.classList.contains('view-order-btn')) {
+        viewOrder(e.target.dataset.id);
+    }
+  });
+
+  // Event delegation for modal footer buttons (Update Status)
+  document.getElementById('orderModalFooter').addEventListener('click', (e) => {
+    if (e.target.classList.contains('update-order-status-btn')) {
+        updateOrderStatus(e.target.dataset.id);
+    }
+  });
 });
 
 async function loadOrders() {
-  const status = document.getElementById('statusFilter').value;
+  const statusFilter = document.getElementById('statusFilter');
+  const status = statusFilter ? statusFilter.value : '';
   let url = '../php/orders.php?';
   if (status) url += `status=${status}`;
   const tbody = document.getElementById('ordersTbody');
@@ -30,7 +53,7 @@ async function loadOrders() {
         <td>${statusBadge(o.status)}</td>
         <td>${statusBadge(o.payment_status)}</td>
         <td>${formatDate(o.created_at)}</td>
-        <td><button class="btn btn-sm btn-outline" onclick="viewOrder(${o.order_id})">Details</button></td>
+        <td><button class="btn btn-sm btn-outline view-order-btn" data-id="${o.order_id}">Details</button></td>
       </tr>
     `).join('');
   } catch (err) {
@@ -60,7 +83,7 @@ async function viewOrder(id) {
     ).join('');
 
     document.getElementById('orderModalBody').innerHTML = `
-      <div class="grid-2" style="margin-bottom:16px">
+      <div class="grid-2 mb-16">
         <div>
           <p><strong>Customer:</strong> ${o.full_name || '—'}</p>
           <p><strong>Email:</strong> ${o.email || '—'}</p>
@@ -70,11 +93,11 @@ async function viewOrder(id) {
         <div>
           <p><strong>Status:</strong> ${statusBadge(o.status)}</p>
           <p><strong>Payment:</strong> ${statusBadge(o.payment_status)}</p>
-          <p><strong>Total:</strong> <span style="font-size:18px;font-weight:700;color:var(--primary)">${formatMoney(o.total_amount)}</span></p>
+          <p><strong>Total:</strong> <span class="text-primary-lg">${formatMoney(o.total_amount)}</span></p>
         </div>
       </div>
-      <h4 style="margin-bottom:8px">Items Ordered</h4>
-      <div class="table-wrap" style="margin-bottom:16px">
+      <h4 class="mb-8">Items Ordered</h4>
+      <div class="table-wrap mb-16">
         <table>
           <thead><tr><th>Product</th><th>Qty</th><th>Unit Price</th><th>Subtotal</th></tr></thead>
           <tbody>${itemRows}</tbody>
@@ -89,9 +112,11 @@ async function viewOrder(id) {
     `;
 
     document.getElementById('orderModalFooter').innerHTML = `
-      <button class="btn btn-outline" onclick="closeModal('orderModal')">Close</button>
-      <button class="btn btn-primary" onclick="updateOrderStatus(${id})">Update Status</button>
+      <button class="btn btn-outline" id="closeOrderModalBtn2">Close</button>
+      <button class="btn btn-primary update-order-status-btn" data-id="${id}">Update Status</button>
     `;
+
+    document.getElementById('closeOrderModalBtn2').addEventListener('click', () => closeModal('orderModal'));
   } catch (err) {
     document.getElementById('orderModalBody').innerHTML = `<div class="alert alert-error">${err.message}</div>`;
   }

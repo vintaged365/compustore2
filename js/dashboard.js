@@ -58,17 +58,20 @@ async function loadDashboard() {
     if (lowData.length === 0) {
       lstbody.innerHTML = '<tr><td colspan="5" class="empty">All products are well stocked ✅</td></tr>';
     } else {
-      lstbody.innerHTML = lowData.map(p => `
-        <tr>
-          <td><strong>${p.product_name}</strong></td>
-          <td>${p.sku}</td>
-          <td>${p.category}</td>
-          <td><strong style="color:${p.quantity_in_stock===0?'var(--danger)':'var(--warning)'}">
-            ${p.quantity_in_stock === 0 ? 'OUT OF STOCK' : p.quantity_in_stock}
-          </strong></td>
-          <td>${p.reorder_level}</td>
-        </tr>
-      `).join('');
+      lstbody.innerHTML = lowData.map(p => {
+        const isOutOfStock = p.quantity_in_stock === 0;
+        return `
+            <tr>
+              <td><strong>${p.product_name}</strong></td>
+              <td>${p.sku}</td>
+              <td>${p.category}</td>
+              <td><strong class="${isOutOfStock ? 'text-danger' : 'text-warning'}">
+                ${isOutOfStock ? 'OUT OF STOCK' : p.quantity_in_stock}
+              </strong></td>
+              <td>${p.reorder_level}</td>
+            </tr>
+        `;
+      }).join('');
     }
   } catch (err) {
     showAlert('alertBox', 'Failed to load dashboard: ' + err.message);

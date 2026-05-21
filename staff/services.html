@@ -29,7 +29,7 @@
       <div class="card">
         <div class="card-header"><h3>Requests</h3></div>
         <div class="toolbar">
-          <select id="filterStatus" onchange="loadServices()">
+          <select id="filterStatus">
             <option value="">All statuses</option>
             <option value="pending">Pending</option>
             <option value="in_progress">In progress</option>
@@ -37,8 +37,8 @@
             <option value="completed">Completed</option>
           </select>
           <span class="toolbar-right"></span>
-          <button id="viewKanban" class="btn btn-primary" onclick="setView('kanban')">Kanban</button>
-          <button id="viewTable" class="btn btn-outline" onclick="setView('table')">Table</button>
+          <button id="viewKanban" class="btn btn-primary">Kanban</button>
+          <button id="viewTable" class="btn btn-outline">Table</button>
         </div>
         <div id="kanbanView" class="kanban">
           <div class="kanban-col col-pending"><div class="kanban-col-title">Pending <span id="cnt-pending">0</span></div><div id="col-pending"></div></div>
@@ -61,7 +61,7 @@
   <div class="modal">
     <div class="modal-header">
       <h3 id="serviceModalTitle">Service Request</h3>
-      <button class="modal-close" onclick="closeModal('serviceModal')">&times;</button>
+      <button class="modal-close" id="closeServiceModalBtn">&times;</button>
     </div>
     <div class="modal-body" id="serviceModalBody"></div>
     <div class="modal-footer" id="serviceModalFooter"></div>

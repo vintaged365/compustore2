@@ -12,9 +12,52 @@ document.addEventListener('DOMContentLoaded', async () => {
   loadProducts();
 
   const search = document.getElementById('searchInput');
-  search.addEventListener('input', debounce(loadProducts, 300));
-  document.getElementById('categoryFilter').addEventListener('change', loadProducts);
-  document.getElementById('statusFilter').addEventListener('change', loadProducts);
+  if (search) search.addEventListener('input', debounce(loadProducts, 300));
+  
+  const catFilter = document.getElementById('categoryFilter');
+  if (catFilter) catFilter.addEventListener('change', loadProducts);
+  
+  const statFilter = document.getElementById('statusFilter');
+  if (statFilter) statFilter.addEventListener('change', loadProducts);
+
+  const addProductBtn = document.getElementById('addProductBtn');
+  if (addProductBtn) {
+    addProductBtn.addEventListener('click', () => {
+      resetForm();
+      openModal('productModal');
+    });
+  }
+
+  const closeProductModalBtn = document.getElementById('closeProductModalBtn');
+  if (closeProductModalBtn) {
+    closeProductModalBtn.addEventListener('click', () => closeModal('productModal'));
+  }
+
+  const cancelProductBtn = document.getElementById('cancelProductBtn');
+  if (cancelProductBtn) {
+    cancelProductBtn.addEventListener('click', () => closeModal('productModal'));
+  }
+
+  const saveProductBtn = document.getElementById('saveProductBtn');
+  if (saveProductBtn) {
+    saveProductBtn.addEventListener('click', saveProduct);
+  }
+
+  // Event delegation for dynamic buttons
+  document.getElementById('productsTbody').addEventListener('click', (e) => {
+    if (e.target.classList.contains('edit-product-btn')) {
+        editProduct(e.target.dataset.id);
+    }
+    if (e.target.classList.contains('delete-product-btn')) {
+        deleteProduct(e.target.dataset.id, e.target.dataset.name);
+    }
+  });
+
+  document.getElementById('pagination').addEventListener('click', (e) => {
+    if (e.target.classList.contains('page-btn')) {
+        goPage(Number(e.target.dataset.page));
+    }
+  });
 });
 
 async function loadCategories() {
@@ -87,9 +130,9 @@ function renderPage() {
                 <span class="badge badge-${statusClass}">${statusLabel}</span>
             </td>
             <td>
-                <button class="btn btn-sm btn-outline" onclick="editProduct(${p.product_id})">Edit</button>
-                <button class="btn btn-sm btn-danger" 
-                        onclick="deleteProduct(${p.product_id}, '${escapeHtml(p.product_name.replace(/'/g, "\\'"))}')">
+                <button class="btn btn-sm btn-outline edit-product-btn" data-id="${p.product_id}">Edit</button>
+                <button class="btn btn-sm btn-danger delete-product-btn" 
+                        data-id="${p.product_id}" data-name="${escapeHtml(p.product_name.replace(/'/g, "\\'"))}">
                     Delete
                 </button>
             </td>
@@ -109,9 +152,9 @@ function renderPage() {
 
   // Pagination
   const pages = Math.ceil(allProducts.length / perPage);
-  let pag = `<span style="color:var(--muted);font-size:12px">${allProducts.length} products</span>`;
+  let pag = `<span class="muted fs-12">${allProducts.length} products</span>`;
   for (let i = 1; i <= pages; i++) {
-    pag += `<button class="btn btn-sm ${i === page ? 'btn-primary' : 'btn-outline'}" onclick="goPage(${i})">${i}</button>`;
+    pag += `<button class="btn btn-sm page-btn ${i === page ? 'btn-primary' : 'btn-outline'}" data-page="${i}">${i}</button>`;
   }
   document.getElementById('pagination').innerHTML = pag;
 }

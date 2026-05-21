@@ -29,7 +29,7 @@
       <div class="card">
         <div class="card-header"><h3>Customer Orders</h3></div>
         <div class="toolbar">
-          <select id="statusFilter" onchange="loadOrders()">
+          <select id="statusFilter">
             <option value="">All statuses</option>
             <option value="pending">Pending</option>
             <option value="processing">Processing</option>
@@ -52,7 +52,7 @@
   <div class="modal">
     <div class="modal-header">
       <h3 id="orderModalTitle">Order</h3>
-      <button class="modal-close" onclick="closeModal('orderModal')">&times;</button>
+      <button class="modal-close" id="closeOrderModalBtn">&times;</button>
     </div>
     <div class="modal-body" id="orderModalBody"></div>
     <div class="modal-footer" id="orderModalFooter"></div>

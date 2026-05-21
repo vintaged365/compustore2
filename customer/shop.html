@@ -28,20 +28,20 @@
           <div class="avatar" id="topbarAvatar">CU</div>
         </div>
       </div>
-      <div class="card" style="margin-top:20px">
+      <div class="card mt-20">
         <div class="card-header">
           <h3>Products</h3>
           <!-- Cart button opens the cart modal -->
-          <button class="btn btn-sm btn-outline" onclick="openCartModal()">
+          <button class="btn btn-sm btn-outline" id="openCartBtn">
             🛒 Cart <span id="cartCount" class="badge badge-info">0</span>
           </button>
         </div>
         <div id="productsContainer" class="stats-grid"></div>
         <div class="modal-overlay hidden" id="cartModal">
-          <div class="modal" style="max-width:520px">
+          <div class="modal max-w-520">
             <div class="modal-header">
               <h3>🛒 Your Cart</h3>
-              <button class="modal-close" onclick="closeCartModal()">✕</button>
+              <button class="modal-close" id="closeCartBtn">✕</button>
             </div>
 
             <div class="modal-body">
@@ -55,9 +55,9 @@
             </div>
 
             <div class="modal-footer">
-              <button class="btn btn-outline" onclick="closeCartModal()">Close</button>
-              <button class="btn btn-danger btn-sm" onclick="clearCart()" id="clearCartBtn">Clear Cart</button>
-              <button class="btn btn-primary" onclick="checkout()" id="checkoutBtn">Checkout</button>
+              <button class="btn btn-outline" id="closeCartBtn2">Close</button>
+              <button class="btn btn-danger btn-sm" id="clearCartBtn">Clear Cart</button>
+              <button class="btn btn-primary" id="checkoutBtn">Checkout</button>
             </div>
           </div>
         </div>

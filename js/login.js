@@ -171,6 +171,24 @@ document.addEventListener('DOMContentLoaded', () => {
     btn.addEventListener('click', () => selectRole(btn.dataset.role, btn));
   });
 
+  const loginForm = document.getElementById('loginForm');
+  if (loginForm) {
+    loginForm.addEventListener('submit', handleLogin);
+  }
+
+  const showRegisterBtn = document.getElementById('showRegisterBtn');
+  if (showRegisterBtn) {
+    showRegisterBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      showRegister();
+    });
+  }
+
+  const closeRegisterBtn = document.getElementById('closeRegisterBtn');
+  if (closeRegisterBtn) {
+    closeRegisterBtn.addEventListener('click', closeRegisterModal);
+  }
+
   fetch('php/session.php')
     .then(res => res.json())
     .then(data => {

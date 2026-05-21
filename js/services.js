@@ -13,6 +13,48 @@ document.addEventListener('DOMContentLoaded', async () => {
   fillTopbar(currentUser);
   staffList = await apiFetch('../php/reports.php?type=staff').catch(() => []);
   loadServices();
+
+  const filterStatus = document.getElementById('filterStatus');
+  if (filterStatus) filterStatus.addEventListener('change', loadServices);
+
+  const viewKanbanBtn = document.getElementById('viewKanban');
+  if (viewKanbanBtn) viewKanbanBtn.addEventListener('click', () => setView('kanban'));
+
+  const viewTableBtn = document.getElementById('viewTable');
+  if (viewTableBtn) viewTableBtn.addEventListener('click', () => setView('table'));
+
+  const closeServiceModalBtn = document.getElementById('closeServiceModalBtn');
+  if (closeServiceModalBtn) {
+    closeServiceModalBtn.addEventListener('click', () => closeModal('serviceModal'));
+  }
+
+  // Event delegation for Kanban cards
+  document.getElementById('kanbanView').addEventListener('click', (e) => {
+    const card = e.target.closest('.kanban-card');
+    if (card) {
+        viewService(card.dataset.id);
+    }
+  });
+
+  // Event delegation for Table view buttons
+  document.getElementById('servicesTbody').addEventListener('click', (e) => {
+    if (e.target.classList.contains('view-service-btn')) {
+        viewService(e.target.dataset.id);
+    }
+  });
+
+  // Event delegation for modal footer
+  document.getElementById('serviceModalFooter').addEventListener('click', (e) => {
+    if (e.target.classList.contains('update-service-btn')) {
+        updateService(e.target.dataset.id);
+    }
+    if (e.target.classList.contains('complete-service-btn')) {
+        completeService(e.target.dataset.id);
+    }
+    if (e.target.classList.contains('close-service-modal-btn')) {
+        closeModal('serviceModal');
+    }
+  });
 });
 
 function setView(v) {
@@ -50,15 +92,15 @@ function renderKanban() {
     const el = document.getElementById(`col-${col}`);
     if (!el) return;
     el.innerHTML = items.length === 0
-      ? `<div class="empty" style="padding:16px;font-size:12px">No requests</div>`
+      ? `<div class="empty p-16 fs-12">No requests</div>`
       : items.map(s => `
-          <div class="kanban-card" onclick="viewService(${s.service_id})">
+          <div class="kanban-card" data-id="${s.service_id}">
             <div class="kanban-card-id">${s.service_ref}</div>
             <div class="kanban-card-title">${s.device_type}${s.device_brand ? ' · ' + s.device_brand : ''}</div>
             <div class="kanban-card-meta">${s.customer_name || '—'}</div>
             <div class="kanban-card-foot">
               ${priorityBadge(s.priority)}
-              <span style="font-size:11px;color:var(--muted)">${s.technician_name || 'Unassigned'}</span>
+              <span class="fs-11 muted">${s.technician_name || 'Unassigned'}</span>
             </div>
           </div>
         `).join('');
@@ -76,12 +118,12 @@ function renderTable() {
       <td>${s.service_ref}</td>
       <td>${s.customer_name || '—'}</td>
       <td>${s.device_type}</td>
-      <td style="max-width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${s.issue_description}</td>
+      <td class="ellipsis-200">${s.issue_description}</td>
       <td>${priorityBadge(s.priority)}</td>
       <td>${statusBadge(s.status)}</td>
-      <td>${s.technician_name || '<span style="color:var(--muted)">Unassigned</span>'}</td>
+      <td>${s.technician_name || '<span class="muted">Unassigned</span>'}</td>
       <td>${formatDate(s.created_at)}</td>
-      <td><button class="btn btn-sm btn-outline" onclick="viewService(${s.service_id})">View</button></td>
+      <td><button class="btn btn-sm btn-outline view-service-btn" data-id="${s.service_id}">View</button></td>
     </tr>
   `).join('');
 }
@@ -114,12 +156,12 @@ async function viewService(id) {
       : '<tr><td colspan="4" class="empty">No history yet</td></tr>';
 
     document.getElementById('serviceModalBody').innerHTML = `
-      <div class="grid-2" style="margin-bottom:16px">
+      <div class="grid-2 mb-16">
         <div>
           <p><strong>Customer:</strong> ${s.customer_name}</p>
           <p><strong>Phone:</strong> ${s.customer_phone || '—'}</p>
           <p><strong>Device:</strong> ${s.device_type} ${s.device_brand ? '('+s.device_brand+')' : ''}</p>
-          <p style="margin-top:8px"><strong>Issue:</strong><br>${s.issue_description}</p>
+          <p class="mt-8"><strong>Issue:</strong><br>${s.issue_description}</p>
         </div>
         <div>
           <p><strong>Priority:</strong> ${priorityBadge(s.priority)}</p>
@@ -130,7 +172,7 @@ async function viewService(id) {
         </div>
       </div>
 
-      <div class="form-row" style="margin-bottom:12px">
+      <div class="form-row mb-12">
         <div class="form-group">
           <label>Update Status</label>
           <select id="newStatus">${statusOptions}</select>
@@ -140,7 +182,7 @@ async function viewService(id) {
           <select id="assignTech"><option value="">— Unassigned —</option>${staffOptions}</select>
         </div>
       </div>
-      <div class="form-row" style="margin-bottom:16px">
+      <div class="form-row mb-16">
         <div class="form-group">
           <label>Notes</label>
           <input type="text" id="svcNotes" placeholder="Optional notes…">
@@ -151,7 +193,7 @@ async function viewService(id) {
         </div>
       </div>
 
-      <h4 style="margin-bottom:8px">Activity History</h4>
+      <h4 class="mb-8">Activity History</h4>
       <div class="table-wrap">
         <table>
           <thead><tr><th>Date</th><th>Action</th><th>Notes</th><th>By</th></tr></thead>
@@ -161,9 +203,9 @@ async function viewService(id) {
     `;
 
     document.getElementById('serviceModalFooter').innerHTML = `
-      <button class="btn btn-outline" onclick="closeModal('serviceModal')">Close</button>
-      <button class="btn btn-primary" onclick="updateService(${id})">Update</button>
-      ${s.status !== 'completed' ? `<button class="btn btn-success" onclick="completeService(${id})">Mark Complete</button>` : ''}
+      <button class="btn btn-outline close-service-modal-btn">Close</button>
+      <button class="btn btn-primary update-service-btn" data-id="${id}">Update</button>
+      ${s.status !== 'completed' ? `<button class="btn btn-success complete-service-btn" data-id="${id}">Mark Complete</button>` : ''}
     `;
   } catch (err) {
     document.getElementById('serviceModalBody').innerHTML = `<div class="alert alert-error">${err.message}</div>`;

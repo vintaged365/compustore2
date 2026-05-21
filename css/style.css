@@ -362,4 +362,25 @@ tr:last-child td { border-bottom: none; }
       color: #00c853;
     }
 
+/* ---- Utilities ---- */
+.mt-20 { margin-top: 20px; }
+.mt-16 { margin-top: 16px; }
+.mb-16 { margin-bottom: 16px; }
+.mb-8  { margin-bottom: 8px; }
+.flex-wrap-gap { display: flex; gap: 12px; flex-wrap: wrap; padding-top: 4px; }
+.max-w-520 { max-width: 520px; }
+.text-primary-lg { font-size: 18px; font-weight: 700; color: var(--primary); }
+.muted { color: var(--muted) !important; }
+.text-danger { color: var(--danger) !important; }
+.text-warning { color: var(--warning) !important; }
+.fs-13 { font-size: 13px !important; }
+.fs-11 { font-size: 11px !important; }
+.fs-12 { font-size: 12px !important; }
+.mb-12 { margin-bottom: 12px; }
+.max-w-420 { max-width: 420px; }
+.mt-4 { margin-top: 4px; }
+.mt-8 { margin-top: 8px; }
+.p-16 { padding: 16px; }
+.ellipsis-200 { max-width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
 
