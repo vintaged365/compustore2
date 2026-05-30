@@ -50,7 +50,6 @@ async function handleLogin(event) {
       showAlert(data.error || data.message || 'Login failed', 'error');
     }
   } catch (err) {
-    console.error('Login request failed:', err);
     showAlert('Network error: ' + err.message, 'error');
   }
 }
@@ -114,8 +113,6 @@ document.getElementById('registerForm').addEventListener('submit', async functio
     }
 
     try {
-        console.log("Sending registration request...", data);
-        
         const response = await fetch('php/register.php', {
             method: 'POST',
             headers: {
@@ -124,16 +121,12 @@ document.getElementById('registerForm').addEventListener('submit', async functio
             body: JSON.stringify(data)
         });
 
-        console.log('Response status:', response.status, response.statusText);
-
         const text = await response.text();
-        console.log('Raw response:', text);
 
         let result;
         try {
             result = JSON.parse(text);
         } catch (e) {
-            console.error('JSON parse error:', e);
             messageEl.style.color = 'red';
             messageEl.textContent = 'Server error: Invalid response format';
             return;
@@ -153,7 +146,6 @@ document.getElementById('registerForm').addEventListener('submit', async functio
             messageEl.textContent = result.error || 'Registration failed. Please try again.';
         }
     } catch (err) {
-        console.error('Registration error:', err);
         messageEl.style.color = 'red';
         messageEl.textContent = `Error: ${err.message}`;
     }
@@ -197,6 +189,6 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     })
     .catch(err => {
-      console.log('Session check failed:', err);
+      // Session check failed, user stays on login page
     });
 });

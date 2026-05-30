@@ -10,7 +10,6 @@ async function loadProducts() {
   try {
     products = await apiFetch('../php/products.php');
   } catch (err) {
-    console.error('Failed to load products:', err);
     products = [];
   }
   renderProducts();

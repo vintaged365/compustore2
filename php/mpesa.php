@@ -7,14 +7,14 @@
 // ============================================================
 require_once __DIR__ . '/../includes/db.php';
 
-// ── Daraja Sandbox Config ──────────────────────────────────
-define('MPESA_ENV',           'sandbox');   // 'sandbox' or 'production'
-define('MPESA_BASE_URL',      'https://sandbox.safaricom.co.ke');
-define('MPESA_CONSUMER_KEY',  getenv('MPESA_CONSUMER_KEY')  ?: 'C9A7eeQwVyvmVzWSkbd5sdMTiwWQcG1z5J5DoLOYbaBAvVl0');
-define('MPESA_CONSUMER_SECRET', getenv('MPESA_CONSUMER_SECRET') ?: 'uMNrS4rWE3bUqGoE690mD5uiq0XAhr95TsptAKQoOY5CgwMLABNtVIburG4gbeYN');
-define('MPESA_SHORTCODE',     174379);   // Sandbox till number
-define('MPESA_PASSKEY',       'bfb279f9aa9bdbcf158e97dd71a467cd2e0c893059b10f78e6b72ada1ed2c919');  // Sandbox passkey
-define('MPESA_CALLBACK_URL',  'https://keenly-husked-snowboard.ngrok-free.dev/php/mpesa_callback.php');  // UPDATE THIS
+// ── Daraja Configuration ──────────────────────────────────
+define('MPESA_ENV',             getenv('MPESA_ENV')             ?: 'sandbox');
+define('MPESA_BASE_URL',        getenv('MPESA_BASE_URL')        ?: 'https://sandbox.safaricom.co.ke');
+define('MPESA_CONSUMER_KEY',    getenv('MPESA_CONSUMER_KEY')    ?: '');
+define('MPESA_CONSUMER_SECRET', getenv('MPESA_CONSUMER_SECRET') ?: '');
+define('MPESA_SHORTCODE',       getenv('MPESA_SHORTCODE')       ?: '174379');
+define('MPESA_PASSKEY',         getenv('MPESA_PASSKEY')         ?: '');
+define('MPESA_CALLBACK_URL',    getenv('MPESA_CALLBACK_URL')    ?: '');
 
 $action = $_GET['action'] ?? '';
 

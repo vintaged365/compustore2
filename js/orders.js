@@ -113,10 +113,12 @@ async function viewOrder(id) {
 
     document.getElementById('orderModalFooter').innerHTML = `
       <button class="btn btn-outline" id="closeOrderModalBtn2">Close</button>
+      <button class="btn btn-primary" id="printOrderBtn">Print Receipt</button>
       <button class="btn btn-primary update-order-status-btn" data-id="${id}">Update Status</button>
     `;
 
     document.getElementById('closeOrderModalBtn2').addEventListener('click', () => closeModal('orderModal'));
+    document.getElementById('printOrderBtn').addEventListener('click', () => window.print());
   } catch (err) {
     document.getElementById('orderModalBody').innerHTML = `<div class="alert alert-error">${err.message}</div>`;
   }

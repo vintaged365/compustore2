@@ -1,0 +1,10 @@
+# Environment variables
+.env
+
+# Logs
+logs/
+php/mpesa_callbacks.log
+
+# OS files
+.DS_Store
+Thumbs.db

@@ -383,4 +383,11 @@ tr:last-child td { border-bottom: none; }
 .p-16 { padding: 16px; }
 .ellipsis-200 { max-width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
+/* ---- Print Styles ---- */
+@media print {
+  .sidebar, .topbar, .btn, .modal-header, .modal-footer, .no-print { display: none !important; }
+  .modal { box-shadow: none !important; border: none !important; width: 100% !important; max-width: 100% !important; position: static !important; }
+  .modal-body { padding: 0 !important; }
+}
+
 

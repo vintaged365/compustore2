@@ -6,12 +6,7 @@
 // ============================================================
 require_once __DIR__ . '/../includes/db.php';
 
-// Log raw callback for debugging
 $raw     = file_get_contents('php://input');
-$logDir  = __DIR__ . '/../logs';
-if (!is_dir($logDir)) @mkdir($logDir, 0775, true);
-@file_put_contents($logDir . '/mpesa_callbacks.log', date('[Y-m-d H:i:s] ') . $raw . "\n", FILE_APPEND);
-
 $data = json_decode($raw, true);
 if (!$data) {
     http_response_code(200);
