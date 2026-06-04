@@ -1,9 +1,5 @@
 <?php
-// ============================================================
-// CompuStore HMS – M-Pesa STK Callback (php/mpesa_callback.php)
-// Safaricom calls this URL after customer pays / cancels.
-// Uses pending_payments table for reliable CheckoutRequestID matching.
-// ============================================================
+
 require_once __DIR__ . '/../includes/db.php';
 
 $raw     = file_get_contents('php://input');

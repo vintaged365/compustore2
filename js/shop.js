@@ -175,9 +175,11 @@ async function checkout() {
 
   const user = await getSessionUser();
   if (!user || user.role === 'guest') {
-    showAlert('alertBox', 'Please login or register to complete your purchase', 'warning');
-    setTimeout(() => {
-      // Redirect to login but remember where we came from
+    showResultModal(
+      '🔐 Login Required',
+      'Please login or register to complete your purchase.',
+      'warning',
+      () => {
       window.location.href = '../index.html?redirect=customer/shop.html';
     }, 2000);
     return;
@@ -342,7 +344,7 @@ function pollPaymentStatus(checkoutRequestId, orderId) {
         if (user) {
             if (typeof loadCustomerDashboard === 'function') {
                 loadCustomerDashboard(user.id);
-            }
+          }
         }
         return;
       }
@@ -389,16 +391,13 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   fillTopbar(user);
   if (user.role === 'guest') {
-    const banner = document.getElementById('guestBanner');
-    if (banner) {
-      banner.className = 'alert alert-info mt-20';
-      banner.innerHTML = `
-        <strong>Viewing as Guest:</strong> You can browse products and add them to your cart, 
-        but you must <a href="../index.html?redirect=customer/shop.html" style="text-decoration: underline; font-weight: bold;">Login</a> 
-        to complete a purchase or request services.
-      `;
-      banner.classList.remove('hidden');
-    }
+    showResultModal(
+      '👋 Welcome, Guest!',
+      `You are currently viewing the shop as a guest. You can browse products and add them to your cart, but you must 
+      <a href="../index.html?redirect=customer/shop.html" style="text-decoration: underline; font-weight: bold; color: var(--primary);">Login</a> 
+      to complete a purchase or request services.`,
+      'info'
+    );
   }
 
   loadCategories();
