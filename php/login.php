@@ -50,7 +50,7 @@ $_SESSION['role']      = isset($user['role']) ? $user['role'] : $role;
 
 // Redirect target
 $redirect = match($_SESSION['role']) {
-    'admin'      => 'staff/dashboard.html',
+    'admin'      => 'admin/dashboard.html',
     'staff'      => 'staff/dashboard.html',
     'manager'    => 'staff/dashboard.html',
     'technician' => 'staff/dashboard.html',

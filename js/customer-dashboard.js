@@ -4,7 +4,7 @@
 
 document.addEventListener('DOMContentLoaded', async () => {
   bindLogout();
-  const user = await requireAuth();
+  const user = await requireAuth('customer');
   if (!user) return;
 
   fillTopbar(user);

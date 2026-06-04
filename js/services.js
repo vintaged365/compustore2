@@ -8,7 +8,7 @@ let staffList   = [];
 
 document.addEventListener('DOMContentLoaded', async () => {
   bindLogout();
-  currentUser = await requireAuth();
+  currentUser = await requireAuth('staff');
   if (!currentUser) return;
   fillTopbar(currentUser);
   staffList = await apiFetch('../php/reports.php?type=staff').catch(() => []);
@@ -166,6 +166,7 @@ async function viewService(id) {
         <div>
           <p><strong>Priority:</strong> ${priorityBadge(s.priority)}</p>
           <p><strong>Status:</strong> ${statusBadge(s.status)}</p>
+          <p><strong>Payment:</strong> ${statusBadge(s.payment_status)} ${s.mpesa_receipt ? `<small class="text-muted">(${s.mpesa_receipt})</small>` : ''}</p>
           <p><strong>Created:</strong> ${formatDate(s.created_at)}</p>
           <p><strong>Est. Cost:</strong> ${s.estimated_cost ? formatMoney(s.estimated_cost) : '—'}</p>
           <p><strong>Final Cost:</strong> ${s.final_cost ? formatMoney(s.final_cost) : '—'}</p>

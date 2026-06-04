@@ -3,7 +3,7 @@
 // ============================================================
 document.addEventListener('DOMContentLoaded', async () => {
   bindLogout();
-  const user = await requireAuth();
+  const user = await requireAuth('staff');
   if (!user) return;
   fillTopbar(user);
   loadOrders();
@@ -92,7 +92,7 @@ async function viewOrder(id) {
         </div>
         <div>
           <p><strong>Status:</strong> ${statusBadge(o.status)}</p>
-          <p><strong>Payment:</strong> ${statusBadge(o.payment_status)}</p>
+          <p><strong>Payment:</strong> ${statusBadge(o.payment_status)} ${o.mpesa_receipt ? `<small class="text-muted">(${o.mpesa_receipt})</small>` : ''}</p>
           <p><strong>Total:</strong> <span class="text-primary-lg">${formatMoney(o.total_amount)}</span></p>
         </div>
       </div>

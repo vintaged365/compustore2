@@ -57,6 +57,7 @@ if ($method === 'GET') {
 
 // POST - add product
 if ($method === 'POST') {
+    requireAnyRole(['staff', 'manager', 'technician']);
     $d = requestJson();
     requireFields($d, ['product_name', 'sku', 'category', 'unit_price']);
 
@@ -76,6 +77,7 @@ if ($method === 'POST') {
 
 // PUT - update product
 if ($method === 'PUT') {
+    requireAnyRole(['staff', 'manager', 'technician']);
     $d  = requestJson();
     requireFields($d, ['product_id', 'product_name', 'category', 'unit_price']);
 
@@ -98,6 +100,7 @@ if ($method === 'PUT') {
 
 // DELETE - remove product
 if ($method === 'DELETE') {
+    requireAnyRole(['staff', 'manager', 'technician']);
     $id   = (int)($_GET['id'] ?? 0);
     if ($id <= 0) jsonResponse(['error' => 'Invalid product id'], 400);
 

@@ -10,6 +10,14 @@ function selectRole(role, button) {
     btn.classList.remove('active');
   });
   button.classList.add('active');
+
+  // If guest is selected, redirect immediately to the public shop view
+  if (role === 'guest') {
+    showAlert('Entering as guest...', 'success');
+    setTimeout(() => {
+      window.location.href = 'customer/shop.html?guest=true';
+    }, 800);
+  }
 }
 
 function showAlert(message, type = 'error') {
@@ -44,7 +52,9 @@ async function handleLogin(event) {
     if (data.success) {
       showAlert('Login successful!', 'success');
       setTimeout(() => {
-        window.location.href = data.redirect;
+        const urlParams = new URLSearchParams(window.location.search);
+        const redirect = urlParams.get('redirect');
+        window.location.href = redirect || data.redirect;
       }, 1000);
     } else {
       showAlert(data.error || data.message || 'Login failed', 'error');
@@ -55,13 +65,13 @@ async function handleLogin(event) {
 }
 
 function showRegister() {
-    document.getElementById('registerModal').style.display = 'block';
+    document.getElementById('registerModal').classList.remove('hidden');
     document.getElementById('registerMessage').textContent = ''; // Clear previous messages
     document.getElementById('registerForm').reset(); // Reset form fields
 }
 
 function closeRegisterModal() {
-    document.getElementById('registerModal').style.display = 'none';
+    document.getElementById('registerModal').classList.add('hidden');
     document.getElementById('registerForm').reset();
 }
 
@@ -78,7 +88,7 @@ document.getElementById('registerForm').addEventListener('submit', async functio
     e.preventDefault();
     
     const messageEl = document.getElementById('registerMessage');
-    messageEl.style.color = 'blue';
+    messageEl.className = 'text-info';
     messageEl.textContent = 'Creating your account...';
 
     // Get values from registration form with correct IDs
@@ -92,7 +102,7 @@ document.getElementById('registerForm').addEventListener('submit', async functio
 
     // Validate required fields
     if (!data.fullName || !data.email || !data.password) {
-        messageEl.style.color = 'red';
+        messageEl.className = 'text-danger';
         messageEl.textContent = 'Please fill in all required fields';
         return;
     }
@@ -100,14 +110,14 @@ document.getElementById('registerForm').addEventListener('submit', async functio
     // Validate email format
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(data.email)) {
-        messageEl.style.color = 'red';
+        messageEl.className = 'text-danger';
         messageEl.textContent = 'Please enter a valid email address';
         return;
     }
 
     // Validate password length
     if (data.password.length < 6) {
-        messageEl.style.color = 'red';
+        messageEl.className = 'text-danger';
         messageEl.textContent = 'Password must be at least 6 characters';
         return;
     }
@@ -127,13 +137,13 @@ document.getElementById('registerForm').addEventListener('submit', async functio
         try {
             result = JSON.parse(text);
         } catch (e) {
-            messageEl.style.color = 'red';
+            messageEl.className = 'text-danger';
             messageEl.textContent = 'Server error: Invalid response format';
             return;
         }
 
         if (result.success) {
-            messageEl.style.color = 'green';
+            messageEl.className = 'text-success';
             messageEl.textContent = result.message || 'Account created successfully! You can now log in.';
             
             // Clear and close modal after 2 seconds
@@ -142,11 +152,11 @@ document.getElementById('registerForm').addEventListener('submit', async functio
                 showAlert('Account created! Please log in.', 'success');
             }, 2000);
         } else {
-            messageEl.style.color = 'red';
+            messageEl.className = 'text-danger';
             messageEl.textContent = result.error || 'Registration failed. Please try again.';
         }
     } catch (err) {
-        messageEl.style.color = 'red';
+        messageEl.className = 'text-danger';
         messageEl.textContent = `Error: ${err.message}`;
     }
 });

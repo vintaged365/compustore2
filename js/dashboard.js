@@ -3,7 +3,7 @@
 // ============================================================
 document.addEventListener('DOMContentLoaded', async () => {
   bindLogout();
-  const user = await requireAuth();
+  const user = await requireAuth('staff');
   if (!user) return;
   fillTopbar(user);
   loadDashboard();

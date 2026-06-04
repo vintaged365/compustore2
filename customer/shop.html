@@ -28,7 +28,17 @@
           <div class="avatar" id="topbarAvatar">CU</div>
         </div>
       </div>
-      <div class="card mt-20">
+      <div id="guestBanner" class="hidden"></div>
+      
+      <div class="toolbar mt-20">
+        <input type="text" id="searchInput" class="search-input" placeholder="Search products...">
+        <select id="categoryFilter">
+          <option value="">All Categories</option>
+        </select>
+        <div class="toolbar-right muted fs-12" id="productCount">0 products</div>
+      </div>
+
+      <div class="card mt-16">
         <div class="card-header">
           <h3>Products</h3>
           <!-- Cart button opens the cart modal -->

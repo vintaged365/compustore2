@@ -100,13 +100,35 @@ function requireFields(array $data, array $fields): void
 function requireLogin(?string $role = null): void
 {
     if (!isset($_SESSION['user_id'])) {
-        header('Location: /index.html');
+        header('Location: ../index.html');
         exit;
     }
 
-    if ($role && ($_SESSION['role'] ?? '') !== $role) {
-        header('Location: /index.html');
+    if ($role && ($_SESSION['role'] ?? '') !== $role && ($_SESSION['role'] ?? '') !== 'admin') {
+        header('Location: ../index.html');
         exit;
+    }
+}
+
+function requireLoginJson(?string $role = null): void
+{
+    if (!isset($_SESSION['user_id'])) {
+        jsonResponse(['error' => 'Authentication required'], 401);
+    }
+
+    if ($role && ($_SESSION['role'] ?? '') !== $role && ($_SESSION['role'] ?? '') !== 'admin') {
+        jsonResponse(['error' => 'Unauthorized access'], 403);
+    }
+}
+
+function requireAnyRole(array $roles): void
+{
+    if (!isset($_SESSION['user_id'])) {
+        jsonResponse(['error' => 'Authentication required'], 401);
+    }
+
+    if (!in_array($_SESSION['role'] ?? '', $roles) && ($_SESSION['role'] ?? '') !== 'admin') {
+        jsonResponse(['error' => 'Unauthorized access'], 403);
     }
 }
 ?>

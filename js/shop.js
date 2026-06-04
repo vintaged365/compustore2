@@ -7,37 +7,60 @@ let products = [];
 
 // ── Load products from API ─────────────────────────────────
 async function loadProducts() {
+  const search = document.getElementById('searchInput').value.trim();
+  const category = document.getElementById('categoryFilter').value;
+  
+  let url = `../php/products.php?`;
+  if (search) url += `search=${encodeURIComponent(search)}&`;
+  if (category) url += `category=${encodeURIComponent(category)}&`;
+
   try {
-    products = await apiFetch('../php/products.php');
+    products = await apiFetch(url);
   } catch (err) {
     products = [];
   }
   renderProducts();
 }
 
+async function loadCategories() {
+  try {
+    const cats = await apiFetch('../php/reports.php?type=categories');
+    const sel = document.getElementById('categoryFilter');
+    cats.forEach(c => sel.insertAdjacentHTML('beforeend', `<option>${c}</option>`));
+  } catch { }
+}
+
 // ── Render product cards into #productsContainer ───────────
 function renderProducts() {
   const container = document.getElementById('productsContainer');
+  const countEl = document.getElementById('productCount');
   if (!container) return;
+
+  if (countEl) countEl.textContent = `${products.length} products`;
 
   if (!products.length) {
     container.innerHTML = '<div class="empty">No products available</div>';
     return;
   }
 
-  container.innerHTML = products.map(p => `
-    <div class="product-card">
-      <h3>${p.product_name}</h3>
-      <p class="price">${formatMoney(p.unit_price)}</p>
-      <button
-        data-id="${p.product_id}"
-        data-name="${p.product_name.replace(/'/g, "\\'")}"
-        data-price="${p.unit_price}"
-        class="btn btn-primary btn-sm add-to-cart-btn">
-        Add to Cart
-      </button>
-    </div>
-  `).join('');
+  container.innerHTML = products.map(p => {
+    const isOut = parseInt(p.quantity_in_stock) <= 0;
+    return `
+      <div class="product-card">
+        <h3>${p.product_name}</h3>
+        <p class="muted fs-11">${p.category}</p>
+        <p class="price">${formatMoney(p.unit_price)}</p>
+        <button
+          data-id="${p.product_id}"
+          data-name="${p.product_name.replace(/'/g, "\\'")}"
+          data-price="${p.unit_price}"
+          class="btn ${isOut ? 'btn-outline' : 'btn-primary'} btn-sm add-to-cart-btn"
+          ${isOut ? 'disabled' : ''}>
+          ${isOut ? 'Out of Stock' : 'Add to Cart'}
+        </button>
+      </div>
+    `;
+  }).join('');
 }
 
 // ── Add item to cart ───────────────────────────────────────
@@ -151,8 +174,12 @@ async function checkout() {
   }
 
   const user = await getSessionUser();
-  if (!user) {
-    window.location.href = '../index.html';
+  if (!user || user.role === 'guest') {
+    showAlert('alertBox', 'Please login or register to complete your purchase', 'warning');
+    setTimeout(() => {
+      // Redirect to login but remember where we came from
+      window.location.href = '../index.html?redirect=customer/shop.html';
+    }, 2000);
     return;
   }
 
@@ -357,12 +384,33 @@ function updateCartCount() {
 document.addEventListener('DOMContentLoaded', async () => {
   bindLogout();
 
-  const user = await requireAuth();
+  const user = await requireAuth(['customer', 'guest']);
   if (!user) return;
 
   fillTopbar(user);
+  if (user.role === 'guest') {
+    const banner = document.getElementById('guestBanner');
+    if (banner) {
+      banner.className = 'alert alert-info mt-20';
+      banner.innerHTML = `
+        <strong>Viewing as Guest:</strong> You can browse products and add them to your cart, 
+        but you must <a href="../index.html?redirect=customer/shop.html" style="text-decoration: underline; font-weight: bold;">Login</a> 
+        to complete a purchase or request services.
+      `;
+      banner.classList.remove('hidden');
+    }
+  }
+
+  loadCategories();
   loadProducts();
   updateCartCount();   // show correct badge count on page load
+
+  // Search & Filter
+  const searchInput = document.getElementById('searchInput');
+  if (searchInput) searchInput.addEventListener('input', debounce(loadProducts, 300));
+  
+  const categoryFilter = document.getElementById('categoryFilter');
+  if (categoryFilter) categoryFilter.addEventListener('change', loadProducts);
 
   // Event listeners for static elements
   const openCartBtn = document.getElementById('openCartBtn');

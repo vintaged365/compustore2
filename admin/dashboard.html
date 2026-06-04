@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard — CompuStore HMS</title>
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+<div class="app-shell">
+  <nav class="sidebar">
+    <div class="sidebar-logo">🛡️ Admin Portal</div>
+    <div class="sidebar-section">Management</div>
+    <a class="sidebar-link active" href="dashboard.html"><span class="icon">📊</span> Admin Home</a>
+    <a class="sidebar-link" href="../staff/inventory.html"><span class="icon">📦</span> Manage Inventory</a>
+    <a class="sidebar-link" href="../staff/orders.html"><span class="icon">🛒</span> Manage Orders</a>
+    <a class="sidebar-link" href="../staff/services.html"><span class="icon">🔧</span> Manage Services</a>
+    <div class="sidebar-section">System</div>
+    <a class="sidebar-link" href="#"><span class="icon">👥</span> Manage Users (Pro)</a>
+    <a class="sidebar-link" href="#"><span class="icon">📈</span> Analytics</a>
+    <div class="sidebar-section">Account</div>
+    <a class="sidebar-link logout-btn" href="#"><span class="icon">🚪</span> Logout</a>
+  </nav>
+
+  <div class="main-area">
+    <div class="topbar">
+      <span class="topbar-title">Administrator Overview</span>
+      <div class="topbar-user">
+        <span id="topbarName">Admin</span>
+        <div class="avatar" id="topbarAvatar">AD</div>
+      </div>
+    </div>
+
+    <div class="page-content">
+      <div class="grid-2">
+        <div class="card p-24">
+          <h2>Welcome, Admin</h2>
+          <p class="muted mt-8">You have full access to the system. Use the sidebar to manage inventory, sales, and service requests.</p>
+          <div class="mt-20">
+            <a href="../staff/dashboard.html" class="btn btn-primary">View Staff Operations</a>
+          </div>
+        </div>
+        
+        <div class="card p-24">
+          <h3>System Health</h3>
+          <ul class="mt-16 list-none">
+            <li class="mb-8">✅ Database Connected</li>
+            <li class="mb-8">✅ M-Pesa API (Sandbox)</li>
+            <li class="mb-8">✅ Session Management</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="../js/utils.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', async () => {
+    bindLogout();
+    const user = await requireAuth();
+    if (user) fillTopbar(user);
+  });
+</script>
+</body>
+</html>

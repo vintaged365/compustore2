@@ -29,6 +29,23 @@ if ($method === 'GET') {
     $userId = $_GET['user_id'] ?? null;
     $status = $_GET['status'] ?? '';
 
+    // If requesting a specific user's orders, ensure they have permission
+    if ($userId) {
+        if (!isset($_SESSION['user_id']) || ($_SESSION['user_id'] != $userId && $_SESSION['role'] === 'customer')) {
+            jsonResponse(['error' => 'Unauthorized access'], 403);
+        }
+        
+        $stmt = $db->prepare(
+            "SELECT o.*, o.$orderDateCol AS created_at, o.$orderStatusCol AS status FROM orders o WHERE user_id = ? ORDER BY o.$orderDateCol DESC"
+        );
+        $stmt->bind_param('i', $userId);
+        $stmt->execute();
+        jsonResponse($stmt->get_result()->fetch_all(MYSQLI_ASSOC));
+    }
+
+    // If requesting all orders or a specific order detail, require staff/admin
+    requireAnyRole(['staff', 'manager', 'technician']);
+
     if ($id) {
         $stmt = $db->prepare(
             "SELECT o.*, o.$orderStatusCol AS status, u.full_name, u.email FROM orders o
@@ -50,15 +67,6 @@ if ($method === 'GET') {
         $stmt2->execute();
         $order['items'] = $stmt2->get_result()->fetch_all(MYSQLI_ASSOC);
         jsonResponse($order);
-    }
-
-    if ($userId) {
-        $stmt = $db->prepare(
-            "SELECT o.*, o.$orderDateCol AS created_at, o.$orderStatusCol AS status FROM orders o WHERE user_id = ? ORDER BY o.$orderDateCol DESC"
-        );
-        $stmt->bind_param('i', $userId);
-        $stmt->execute();
-        jsonResponse($stmt->get_result()->fetch_all(MYSQLI_ASSOC));
     }
 
     $sql = "SELECT o.*, o.$orderDateCol AS created_at, o.$orderStatusCol AS status, u.full_name, u.email FROM orders o
@@ -85,8 +93,14 @@ if ($method === 'GET') {
 
 // POST - create order
 if ($method === 'POST') {
+    requireLoginJson();
     $d     = requestJson();
     requireFields($d, ['user_id']);
+
+    // Ensure user can only create orders for themselves
+    if ($_SESSION['user_id'] != $d['user_id'] && $_SESSION['role'] === 'customer') {
+        jsonResponse(['error' => 'Unauthorized access'], 403);
+    }
 
     $items = $d['items'] ?? [];
     if (!$items) jsonResponse(['error' => 'No items in order'], 400);
@@ -162,6 +176,7 @@ if ($method === 'POST') {
 
 // PUT - update order status
 if ($method === 'PUT') {
+    requireAnyRole(['staff', 'manager', 'technician']);
     $d    = requestJson();
     requireFields($d, ['order_id', 'status']);
 

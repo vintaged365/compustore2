@@ -41,6 +41,20 @@ if ($method === 'GET') {
     $status = $_GET['status'] ?? '';
     $assigned = $_GET['assigned_to'] ?? '';
 
+    if ($userId) {
+        if (!isset($_SESSION['user_id']) || ($_SESSION['user_id'] != $userId && $_SESSION['role'] === 'customer')) {
+            jsonResponse(['error' => 'Unauthorized access'], 403);
+        }
+        $stmt = $db->prepare(
+            "SELECT sr.*, sr.$serviceDateCol AS created_at FROM service_requests sr WHERE user_id = ? ORDER BY sr.$serviceDateCol DESC"
+        );
+        $stmt->bind_param('i', $userId);
+        $stmt->execute();
+        jsonResponse($stmt->get_result()->fetch_all(MYSQLI_ASSOC));
+    }
+
+    requireAnyRole(['staff', 'manager', 'technician']);
+
     if ($id) {
         $stmt = $db->prepare(
             "SELECT sr.*, sr.$serviceDateCol AS created_at, u.full_name AS customer_name, u.phone AS customer_phone,
@@ -64,15 +78,6 @@ if ($method === 'GET') {
         $stmt2->execute();
         $row['history'] = $stmt2->get_result()->fetch_all(MYSQLI_ASSOC);
         jsonResponse($row);
-    }
-
-    if ($userId) {
-        $stmt = $db->prepare(
-            "SELECT sr.*, sr.$serviceDateCol AS created_at FROM service_requests sr WHERE user_id = ? ORDER BY sr.$serviceDateCol DESC"
-        );
-        $stmt->bind_param('i', $userId);
-        $stmt->execute();
-        jsonResponse($stmt->get_result()->fetch_all(MYSQLI_ASSOC));
     }
 
     $sql = "SELECT sr.*, u.full_name AS customer_name, s.full_name AS technician_name
@@ -108,10 +113,12 @@ if ($method === 'GET') {
 
 // POST - new service request
 if ($method === 'POST') {
+    requireLoginJson();
     $d = requestJson();
     $action = $d['action'] ?? 'create';
 
     if ($action === 'note') {
+        requireAnyRole(['staff', 'manager', 'technician']);
         requireFields($d, ['service_id', 'note']);
 
         $serviceId = (int)$d['service_id'];
@@ -126,6 +133,11 @@ if ($method === 'POST') {
     }
 
     requireFields($d, ['user_id', 'device_type', 'issue_description']);
+    
+    // Ensure user can only create requests for themselves
+    if ($_SESSION['user_id'] != $d['user_id'] && $_SESSION['role'] === 'customer') {
+        jsonResponse(['error' => 'Unauthorized access'], 403);
+    }
 
     $ref      = genRef($db);
     $priority = $d['priority'] ?? 'medium';
@@ -151,6 +163,7 @@ if ($method === 'POST') {
 
 // PUT - update status, assign, complete
 if ($method === 'PUT') {
+    requireAnyRole(['staff', 'manager', 'technician']);
     $d      = requestJson();
     $sid    = (int)($d['service_id'] ?? 0);
     $action = $d['action'] ?? 'status';

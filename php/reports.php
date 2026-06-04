@@ -7,6 +7,11 @@ error_reporting(E_ALL);
 $db   = getDB();
 $type = $_GET['type'] ?? 'dashboard';
 
+// Categories is used by inventory and potentially shop, allow it for all
+if ($type !== 'categories') {
+    requireAnyRole(['staff', 'manager', 'technician']);
+}
+
 function getColumnName(mysqli $db, string $table, array $candidates): string {
     foreach ($candidates as $col) {
         $stmt = $db->prepare(

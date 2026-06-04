@@ -373,6 +373,8 @@ tr:last-child td { border-bottom: none; }
 .muted { color: var(--muted) !important; }
 .text-danger { color: var(--danger) !important; }
 .text-warning { color: var(--warning) !important; }
+.text-success { color: var(--success) !important; }
+.text-info { color: var(--info) !important; }
 .fs-13 { font-size: 13px !important; }
 .fs-11 { font-size: 11px !important; }
 .fs-12 { font-size: 12px !important; }

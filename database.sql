@@ -1,16 +1,9 @@
--- Active: 1778178145943@@127.0.0.1@3306@compustore_hms
+-- Active: 1780603356547@@localhost@3307@compustore_hms
 -- CompuStore HMS Database Schema
 -- Computer Hardware and Service Management System
 
 CREATE DATABASE IF NOT EXISTS compustore_hms;
-
-SHOW DATABASES;
 USE compustore_hms;
-
-show tables
-
-select *
-from users
 
 -- Users table (Customers)
 CREATE TABLE IF NOT EXISTS users (
@@ -456,6 +449,20 @@ CREATE TABLE IF NOT EXISTS pending_payments (
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   INDEX idx_checkout (checkout_request_id),
   INDEX idx_ref (reference_type, reference_id)
+);
+
+-- M-Pesa successful payments log
+CREATE TABLE IF NOT EXISTS payments (
+  payment_id INT PRIMARY KEY AUTO_INCREMENT,
+  checkout_request_id VARCHAR(100) NOT NULL,
+  mpesa_receipt VARCHAR(50) UNIQUE NOT NULL,
+  amount DECIMAL(10, 2) NOT NULL,
+  phone_number VARCHAR(20) NOT NULL,
+  transaction_date VARCHAR(50) NOT NULL,
+  reference_type ENUM('order', 'service') NOT NULL,
+  reference_id INT NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  INDEX idx_mpesa_ref (reference_type, reference_id)
 );
 
 -- Add missing columns to orders if not already present

@@ -39,6 +39,7 @@
                 <button type="button" class="role-btn active" data-role="customer">Customer</button>
                 <button type="button" class="role-btn" data-role="staff">Staff</button>
                 <button type="button" class="role-btn" data-role="admin">Admin</button>
+                <button type="button" class="role-btn" data-role="guest" id="guestBtn">Guest</button>
             </div>
 
             <form id="loginForm">
@@ -64,7 +65,7 @@
                         Admin: admin@test.com (pass: password)</small>
                 </div>
                 <div>
-                    <div id="registerModal" class="modal">
+                    <div id="registerModal" class="modal hidden">
                         <div class="modal-content">
                             <span class="close" id="closeRegisterBtn">&times;</span>
                             <h2>Create New Account</h2>

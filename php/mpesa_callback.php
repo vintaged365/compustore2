@@ -41,7 +41,19 @@ if ($resultCode === 0 && $checkoutId) {
     if ($pending) {
         $refType = $pending['reference_type'];
         $refId   = (int)$pending['reference_id'];
+        $amount  = (float)($meta['Amount'] ?? $pending['amount']);
+        $phone   = $meta['PhoneNumber'] ?? $pending['phone'];
+        $trDate  = (string)($meta['TransactionDate'] ?? date('YmdHis'));
 
+        // 1. Record in detailed payments log
+        $payStmt = $db->prepare(
+            'INSERT INTO payments (checkout_request_id, mpesa_receipt, amount, phone_number, transaction_date, reference_type, reference_id)
+             VALUES (?, ?, ?, ?, ?, ?, ?)'
+        );
+        $payStmt->bind_param('ssdsssi', $checkoutId, $receipt, $amount, $phone, $trDate, $refType, $refId);
+        $payStmt->execute();
+
+        // 2. Update order/service main record
         if ($refType === 'order') {
             $us = $db->prepare(
                 'UPDATE orders
@@ -64,7 +76,7 @@ if ($resultCode === 0 && $checkoutId) {
             $us->execute();
         }
 
-        // Remove the pending record - it is fulfilled
+        // 3. Remove the pending record - it is fulfilled
         $del = $db->prepare('DELETE FROM pending_payments WHERE checkout_request_id = ?');
         $del->bind_param('s', $checkoutId);
         $del->execute();

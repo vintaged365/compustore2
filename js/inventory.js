@@ -5,7 +5,7 @@ let allProducts = [], page = 1, perPage = 15;
 
 document.addEventListener('DOMContentLoaded', async () => {
   bindLogout();
-  const user = await requireAuth();
+  const user = await requireAuth('staff');
   if (!user) return;
   fillTopbar(user);
   loadCategories();

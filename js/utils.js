@@ -79,17 +79,92 @@ function setActiveNav(page) {
 async function getSessionUser() {
   try {
     const data = await apiFetch('../php/session.php');
-    return data.loggedIn ? data.user : null;
+    if (data.loggedIn) return data.user;
+    
+    // Check for guest mode
+    const isGuest = sessionStorage.getItem('isGuest') === 'true' || 
+                    new URLSearchParams(window.location.search).get('guest') === 'true';
+    if (isGuest) {
+      sessionStorage.setItem('isGuest', 'true');
+      return { id: 0, name: 'Guest', role: 'guest' };
+    }
+    return null;
   } catch {
     return null;
   }
 }
 
 // Check auth and redirect if not logged in
-async function requireAuth() {
+async function requireAuth(allowedRoles = null) {
   const user = await getSessionUser();
-  if (!user) { window.location.href = '/index.html'; return null; }
-  return user;
+  if (!user) { 
+    // If not logged in at all, go to login
+    window.location.href = '../index.html'; 
+    return null; 
+  }
+  
+  // If no specific roles required, just return user
+  if (!allowedRoles) return user;
+
+  // Convert single role to array
+  if (!Array.isArray(allowedRoles)) allowedRoles = [allowedRoles];
+
+  // Admin is always allowed
+  if (user.role === 'admin') return user;
+
+  // Check if user role is in allowed list
+  if (allowedRoles.includes(user.role)) return user;
+
+  // Special case: 'staff' allowedRoles includes manager and technician
+  if (allowedRoles.includes('staff') && ['manager', 'technician'].includes(user.role)) {
+    return user;
+  }
+
+  // If not authorized, redirect based on current role
+  if (user.role === 'guest') {
+    window.location.href = 'shop.html';
+  } else {
+    window.location.href = '../index.html';
+  }
+  return null;
+}
+
+// Handle UI for guests
+function handleGuestUI(user) {
+  if (user && user.role === 'guest') {
+    // Hide private pages for guests in sidebar
+    const restrictedPages = [
+      'dashboard.html', 
+      'my-orders.html', 
+      'request-service.html'
+    ];
+    
+    document.querySelectorAll('.sidebar-link').forEach(link => {
+      const href = link.getAttribute('href');
+      if (restrictedPages.includes(href)) {
+        link.classList.add('hidden');
+      }
+    });
+
+    // Add a guest badge to the topbar
+    const nameEl = document.getElementById('topbarName');
+    if (nameEl && !nameEl.innerHTML.includes('badge-guest')) {
+      nameEl.innerHTML = `${user.name} <span class="badge badge-info badge-guest fs-11" style="margin-left: 8px;">Guest Mode</span>`;
+    }
+
+    const logoutBtn = document.querySelector('.logout-btn');
+    if (logoutBtn) {
+      logoutBtn.innerHTML = '<span class="icon">LO</span> Exit Guest';
+      // Re-bind click to handle guest session clearing
+      const newBtn = logoutBtn.cloneNode(true);
+      logoutBtn.parentNode.replaceChild(newBtn, logoutBtn);
+      newBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        sessionStorage.removeItem('isGuest');
+        window.location.href = '../index.html';
+      });
+    }
+  }
 }
 
 // Fill user info in topbar
@@ -98,6 +173,7 @@ function fillTopbar(user) {
   const avEl   = document.getElementById('topbarAvatar');
   if (nameEl) nameEl.textContent = user.name;
   if (avEl)   avEl.textContent   = user.name.substring(0, 2).toUpperCase();
+  handleGuestUI(user);
 }
 
 // Logout button
